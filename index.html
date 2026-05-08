@@ -3,74 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>God Mode - UHD Admin</title>
+    <title>UHD Core Command</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #020617; color: #f8fafc; font-family: sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .input-dark { background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 8px; width: 100%; outline: none; }
-        ::-webkit-scrollbar { height: 8px; width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;700;900&display=swap');
+        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-dark { background: #0b1120; border: 1px solid #1e293b; color: white; padding: 14px; border-radius: 12px; width: 100%; outline: none; transition: all 0.3s; }
+        .input-dark:focus { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59,130,246,0.3); }
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        /* Matrix Grid Animation for Login */
+        .matrix-bg { position: fixed; inset: 0; z-index: -10; background: linear-gradient(rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 0.9)), url('https://i.imgur.com/K3Z9j90.png'); animation: matrixScroll 20s linear infinite; opacity: 0.3; }
+        @keyframes matrixScroll { 0% { background-position: 0 0; } 100% { background-position: 0 1000px; } }
+        /* Glows */
+        .glow-red { box-shadow: 0 0 15px rgba(239,68,68,0.5); }
+        .glow-blue { box-shadow: 0 0 15px rgba(59,130,246,0.5); }
     </style>
 </head>
-<body class="min-h-screen relative">
+<body class="min-h-screen text-sm" oncontextmenu="return false;">
+
+    <div class="matrix-bg"></div>
 
     <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass p-8 rounded-3xl max-w-md w-full shadow-[0_0_50px_rgba(59,130,246,0.2)] border border-blue-500/30 text-center">
-            <i class="fas fa-user-secret text-6xl text-blue-500 mb-6"></i>
-            <h1 class="text-3xl font-black mb-2">Admin God Mode</h1>
-            <p class="text-gray-400 text-sm mb-8">Enter your Master Key to access the panel.</p>
-            
-            <div class="space-y-4">
-                <input type="text" id="workerUrl" class="input-dark text-sm" placeholder="Worker URL (e.g., https://uhd.workers.dev)">
-                <input type="password" id="adminKey" class="input-dark text-sm" placeholder="MASTER_ADMIN_KEY">
-                <button onclick="loginAdmin()" id="loginBtn" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition shadow-lg mt-2">Access Panel</button>
+        <div class="glass-panel p-10 rounded-3xl max-w-md w-full shadow-[0_0_80px_rgba(59,130,246,0.15)] text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-pulse"></div>
+            <div class="w-24 h-24 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-gray-800 shadow-inner">
+                <i class="fas fa-fingerprint text-5xl text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]"></i>
             </div>
-            <p id="loginError" class="text-red-400 text-sm mt-4 hidden"></p>
+            <h1 class="text-3xl font-black mb-2 tracking-tight">SYSTEM ADMIN</h1>
+            <p class="text-gray-400 text-xs mb-8 font-mono tracking-widest uppercase">Identify to Access Core</p>
+            
+            <div class="space-y-5">
+                <div class="relative">
+                    <i class="fas fa-server absolute left-4 top-4 text-gray-500"></i>
+                    <input type="text" id="workerUrl" class="input-dark pl-12 font-mono text-xs" placeholder="Worker API (https://...workers.dev)">
+                </div>
+                <div class="relative">
+                    <i class="fas fa-key absolute left-4 top-4 text-gray-500"></i>
+                    <input type="password" id="adminKey" class="input-dark pl-12 font-mono text-xs tracking-[0.2em]" placeholder="OVERRIDE_SECRET_KEY">
+                </div>
+                <button onclick="loginAdmin()" id="loginBtn" class="w-full py-4 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-600 hover:to-indigo-600 rounded-xl font-black transition-all glow-blue uppercase tracking-widest text-xs mt-4 flex items-center justify-center">
+                    <i class="fas fa-lock-open mr-2"></i> Authenticate
+                </button>
+            </div>
+            <p id="loginError" class="text-red-400 text-xs mt-6 hidden font-mono bg-red-500/10 py-2 rounded-lg border border-red-500/20"></p>
         </div>
     </div>
 
-    <div id="dashboardScreen" class="hidden min-h-screen flex flex-col">
-        <nav class="glass border-b border-gray-800 p-4 sticky top-0 z-50 flex justify-between items-center px-6">
-            <div class="flex items-center gap-3">
-                <i class="fas fa-crown text-2xl text-yellow-400 animate-pulse"></i>
-                <h1 class="text-xl font-bold text-white uppercase tracking-widest">UHD Core Command</h1>
+    <div id="dashboardScreen" class="hidden min-h-screen flex flex-col bg-[#020617]">
+        <nav class="glass border-b border-slate-800 px-6 py-4 sticky top-0 z-40 flex justify-between items-center shadow-lg">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-blue-500/20 rounded-lg border border-blue-500/50 flex items-center justify-center glow-blue">
+                    <i class="fas fa-shield-alt text-blue-400 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black text-white tracking-widest uppercase leading-none">UHD Core Command</h1>
+                    <p class="text-[10px] text-green-400 font-mono"><i class="fas fa-circle text-[8px] animate-pulse"></i> SECURE CONNECTION ESTABLISHED</p>
+                </div>
             </div>
-            <button onclick="logoutAdmin()" class="bg-red-500/10 hover:bg-red-500 border border-red-500/50 hover:text-white text-red-400 px-4 py-2 rounded-lg font-bold transition text-sm">
-                <i class="fas fa-lock mr-2"></i> Lock Panel
-            </button>
+            <div class="flex items-center gap-4">
+                <button onclick="loadUsers()" class="text-gray-400 hover:text-white transition" title="Force Refresh Database"><i class="fas fa-sync-alt"></i></button>
+                <button onclick="logoutAdmin()" class="bg-red-500/10 hover:bg-red-500 border border-red-500/30 hover:border-red-500 text-red-400 hover:text-white px-5 py-2 rounded-lg font-bold transition text-xs tracking-wider uppercase">
+                    <i class="fas fa-power-off mr-2"></i> Terminate
+                </button>
+            </div>
         </nav>
 
-        <div class="p-6 max-w-7xl mx-auto w-full space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="glass p-6 rounded-2xl border border-gray-700 flex items-center justify-between">
-                    <div><p class="text-gray-400 text-sm font-bold uppercase">Total Users</p><h2 class="text-4xl font-black text-white mt-1" id="statUsers">0</h2></div>
-                    <i class="fas fa-users text-5xl text-blue-500 opacity-50"></i>
+        <div class="p-4 md:p-8 max-w-[1400px] mx-auto w-full space-y-6 flex-1">
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="glass p-5 rounded-2xl border border-slate-800 relative overflow-hidden group">
+                    <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition"></div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Registered Users</p>
+                    <h2 class="text-4xl font-black text-white font-mono" id="statUsers">0</h2>
                 </div>
-                <div class="glass p-6 rounded-2xl border border-green-500/30 flex items-center justify-between shadow-[0_0_20px_rgba(34,197,94,0.1)] cursor-pointer hover:bg-gray-800 transition" onclick="loadUsers()">
-                    <div><p class="text-green-400 text-sm font-bold uppercase">System Status</p><h2 class="text-2xl font-bold text-white mt-2 flex items-center"><span class="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></span> ALL SYSTEMS NOMINAL</h2></div>
-                    <i class="fas fa-sync-alt text-4xl text-gray-400 hover:rotate-180 transition duration-500"></i>
+                <div class="glass p-5 rounded-2xl border border-slate-800 relative overflow-hidden group">
+                    <div class="absolute -right-4 -top-4 w-20 h-20 bg-green-500/10 rounded-full blur-xl group-hover:bg-green-500/20 transition"></div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Active Media Files</p>
+                    <h2 class="text-4xl font-black text-white font-mono" id="statFiles">0</h2>
+                </div>
+                <div class="glass p-5 rounded-2xl border border-slate-800 relative overflow-hidden group">
+                    <div class="absolute -right-4 -top-4 w-20 h-20 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition"></div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Est. Storage Used</p>
+                    <h2 class="text-4xl font-black text-white font-mono" id="statStorage">0 <span class="text-lg text-purple-400">GB</span></h2>
+                </div>
+                <div class="glass p-5 rounded-2xl border border-slate-800 flex flex-col justify-center">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Network Load</p>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden mb-1"><div class="bg-gradient-to-r from-green-400 to-blue-500 h-full rounded-full" style="width: 14%"></div></div>
+                    <p class="text-[10px] text-green-400 font-mono text-right">14% - OPTIMAL</p>
                 </div>
             </div>
 
-            <div class="glass rounded-2xl border border-gray-700 overflow-hidden">
-                <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800/50">
-                    <h2 class="text-lg font-bold"><i class="fas fa-server mr-2 text-blue-400"></i> Global User Database</h2>
+            <div class="glass rounded-2xl border border-slate-800 flex flex-col shadow-2xl">
+                <div class="p-5 border-b border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
+                    <h2 class="text-lg font-black uppercase tracking-widest flex items-center"><i class="fas fa-server mr-3 text-blue-500"></i> Global User Node</h2>
+                    
+                    <div class="relative w-full md:w-72">
+                        <i class="fas fa-search absolute left-3 top-3 text-slate-500 text-xs"></i>
+                        <input type="text" id="searchInput" onkeyup="filterUsers()" class="w-full bg-slate-950 border border-slate-700 text-slate-300 text-xs rounded-lg pl-9 pr-3 py-2.5 outline-none focus:border-blue-500 transition" placeholder="Search Email or API Key...">
+                    </div>
                 </div>
+                
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-gray-900/80 text-gray-400 border-b border-gray-700">
+                    <table class="w-full text-left text-xs whitespace-nowrap" id="userTable">
+                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase tracking-wider">
                             <tr>
-                                <th class="p-4 font-bold">User / Secret Key</th>
-                                <th class="p-4 font-bold">Plan</th>
-                                <th class="p-4 font-bold">Method</th>
-                                <th class="p-4 font-bold">Status</th>
-                                <th class="p-4 font-bold text-right">God Actions</th>
+                                <th class="px-6 py-4 font-bold">Identity</th>
+                                <th class="px-6 py-4 font-bold">Plan Details</th>
+                                <th class="px-6 py-4 font-bold">Auth Route</th>
+                                <th class="px-6 py-4 font-bold text-center">Data Blobs</th>
+                                <th class="px-6 py-4 font-bold">Security Status</th>
+                                <th class="px-6 py-4 font-bold text-right">God Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="usersTableBody" class="divide-y divide-gray-800">
+                        <tbody id="usersTableBody" class="divide-y divide-slate-800">
                             </tbody>
                     </table>
                 </div>
@@ -78,24 +130,44 @@
         </div>
     </div>
 
-    <div id="filesModal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="glass rounded-3xl p-6 w-full max-w-4xl max-h-[85vh] flex flex-col border border-gray-600 shadow-2xl">
-            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                <h2 class="text-xl font-bold" id="modalTitle">User Files</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl"><i class="fas fa-times"></i></button>
+    <div id="filesModal" class="hidden fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col border border-slate-700 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-yellow-500"></div>
+            
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/80">
+                <div>
+                    <h2 class="text-xl font-black tracking-tight" id="modalTitle">User Directory</h2>
+                    <p class="text-xs text-slate-400 font-mono mt-1" id="modalSub">Inspecting target files...</p>
+                </div>
+                <div class="flex gap-3">
+                    <button id="nukeBtn" class="bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-xs font-bold uppercase transition hidden"><i class="fas fa-radiation mr-2"></i>Nuke All</button>
+                    <button onclick="closeModal()" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-full text-slate-300 transition flex items-center justify-center"><i class="fas fa-times"></i></button>
+                </div>
             </div>
-            <div class="overflow-y-auto flex-1 pr-2" id="modalContent">
+            
+            <div class="overflow-y-auto flex-1 p-6 bg-[#020617]/50" id="modalContent">
                 </div>
         </div>
     </div>
 
     <script>
+        // Anti-Theft Scripts
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+
         let WORKER_URL = "";
         let ADMIN_KEY = "";
+        let GLOBAL_USERS = [];
 
         window.onload = () => {
-            const savedKey = localStorage.getItem('uhd_admin_key');
-            const savedUrl = localStorage.getItem('uhd_admin_url');
+            const savedKey = localStorage.getItem('uhd_master_key');
+            const savedUrl = localStorage.getItem('uhd_master_url');
             if(savedKey && savedUrl) {
                 WORKER_URL = savedUrl; ADMIN_KEY = savedKey;
                 document.getElementById('workerUrl').value = savedUrl;
@@ -110,21 +182,21 @@
             const btn = document.getElementById('loginBtn');
             const err = document.getElementById('loginError');
 
-            if(!urlInput || !keyInput) { err.innerText = "Fill all fields!"; err.classList.remove('hidden'); return; }
+            if(!urlInput || !keyInput) { err.innerText = "Error: Input required."; err.classList.remove('hidden'); return; }
 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...'; btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> VERIFYING...'; btn.disabled = true;
             try {
                 const res = await fetch(urlInput + '/api/v1/admin/users', { headers: { 'x-admin-key': keyInput } });
                 if(res.ok) {
                     WORKER_URL = urlInput; ADMIN_KEY = keyInput;
-                    localStorage.setItem('uhd_admin_key', keyInput); localStorage.setItem('uhd_admin_url', urlInput);
+                    localStorage.setItem('uhd_master_key', keyInput); localStorage.setItem('uhd_master_url', urlInput);
                     err.classList.add('hidden'); showDashboard();
-                } else { err.innerText = "❌ Wrong Master Key!"; err.classList.remove('hidden'); }
-            } catch(e) { err.innerText = "❌ Network Error! CORS or Wrong URL."; err.classList.remove('hidden'); }
-            btn.innerHTML = 'Access Panel'; btn.disabled = false;
+                } else { err.innerText = "[ACCESS DENIED] Invalid Master Key."; err.classList.remove('hidden'); }
+            } catch(e) { err.innerText = "Connection Refused. Check API URL."; err.classList.remove('hidden'); }
+            btn.innerHTML = '<i class="fas fa-lock-open mr-2"></i> Authenticate'; btn.disabled = false;
         }
 
-        function logoutAdmin() { localStorage.removeItem('uhd_admin_key'); location.reload(); }
+        function logoutAdmin() { localStorage.clear(); location.reload(); }
 
         function showDashboard() {
             document.getElementById('loginScreen').classList.add('hidden');
@@ -132,90 +204,149 @@
             loadUsers();
         }
 
+        // Live Filter Function
+        function filterUsers() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('.user-row');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
         async function loadUsers() {
             const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center"><i class="fas fa-circle-notch fa-spin text-3xl text-blue-500"></i></td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i><p class="text-slate-500 mt-3 font-mono text-xs">Decrypting Node Data...</p></td></tr>';
             try {
                 const res = await fetch(WORKER_URL + '/api/v1/admin/users', { headers: { 'x-admin-key': ADMIN_KEY } });
-                const users = await res.json();
+                GLOBAL_USERS = await res.json();
+                
+                let totalFiles = 0;
                 let html = '';
                 
-                users.forEach(u => {
+                GLOBAL_USERS.forEach(u => {
+                    totalFiles += (u.fileCount || 0);
                     const isBanned = u.banned === true;
+                    
                     const statusBadge = isBanned 
-                        ? '<span class="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-bold uppercase"><i class="fas fa-ban"></i> Banned</span>'
-                        : '<span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs font-bold uppercase"><i class="fas fa-check"></i> Active</span>';
+                        ? '<span class="inline-flex items-center gap-1.5 bg-red-500/10 text-red-500 border border-red-500/20 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider glow-red"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Banned</span>'
+                        : '<span class="inline-flex items-center gap-1.5 bg-green-500/10 text-green-500 border border-green-500/20 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Clear</span>';
                     
                     const banBtn = isBanned 
-                        ? `<button onclick="actionUser('${u.email}', 'unban')" class="bg-green-600/20 text-green-400 hover:bg-green-600 hover:text-white px-3 py-1.5 rounded transition text-xs font-bold" title="Unban"><i class="fas fa-unlock"></i></button>`
-                        : `<button onclick="actionUser('${u.email}', 'ban')" class="bg-orange-600/20 text-orange-400 hover:bg-orange-600 hover:text-white px-3 py-1.5 rounded transition text-xs font-bold" title="Ban"><i class="fas fa-gavel"></i></button>`;
+                        ? `<button onclick="actionUser('${u.email}', 'unban')" class="bg-slate-800 hover:bg-green-600/20 text-slate-400 hover:text-green-400 border border-slate-700 hover:border-green-500/50 w-8 h-8 rounded-lg transition" title="Restore User"><i class="fas fa-unlock"></i></button>`
+                        : `<button onclick="actionUser('${u.email}', 'ban')" class="bg-slate-800 hover:bg-orange-600/20 text-slate-400 hover:text-orange-400 border border-slate-700 hover:border-orange-500/50 w-8 h-8 rounded-lg transition" title="Suspend User"><i class="fas fa-gavel"></i></button>`;
 
-                    const methodIcon = u.provider === 'google' ? '<i class="fab fa-google text-red-400"></i>' : (u.provider === 'github' ? '<i class="fab fa-github text-gray-300"></i>' : (u.provider === 'telegram' ? '<i class="fab fa-telegram text-blue-400"></i>' : '<i class="fas fa-envelope text-gray-400"></i>'));
+                    const methodIcon = u.provider === 'google' ? '<i class="fab fa-google text-red-500"></i>' : (u.provider === 'github' ? '<i class="fab fa-github text-white"></i>' : (u.provider === 'telegram' ? '<i class="fab fa-telegram text-blue-500"></i>' : '<i class="fas fa-envelope text-slate-500"></i>'));
 
                     html += `
-                    <tr class="hover:bg-gray-800/30 transition">
-                        <td class="p-4 flex items-center gap-3">
-                            <img src="${u.avatar || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-full border border-gray-600 object-cover">
-                            <div><p class="font-bold text-gray-200">${u.email}</p><code class="text-[10px] text-gray-500 bg-black px-1.5 py-0.5 rounded border border-gray-700 block mt-1">${u.apiKey}</code></div>
+                    <tr class="user-row hover:bg-slate-900/50 transition border-b border-slate-800/50 group">
+                        <td class="px-6 py-4 flex items-center gap-4">
+                            <div class="relative">
+                                <img src="${u.avatar || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-xl border border-slate-700 object-cover group-hover:border-blue-500 transition">
+                                ${isBanned ? '<div class="absolute inset-0 bg-red-500/30 rounded-xl"></div>' : ''}
+                            </div>
+                            <div>
+                                <p class="font-bold text-white text-sm truncate max-w-[200px]">${u.email}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[9px] uppercase tracking-widest text-slate-500">KEY</span>
+                                    <code class="text-[10px] text-blue-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800 font-mono">${u.apiKey}</code>
+                                </div>
+                            </div>
                         </td>
-                        <td class="p-4"><span class="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-2 py-1 rounded uppercase text-[10px] font-bold">${u.plan}</span></td>
-                        <td class="p-4">${methodIcon} <span class="capitalize ml-1 text-xs text-gray-400">${u.provider || 'email'}</span></td>
-                        <td class="p-4">${statusBadge}</td>
-                        <td class="p-4 text-right space-x-2">
-                            <button onclick="viewFiles('${u.email}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded transition text-xs font-bold shadow-md"><i class="fas fa-folder-open mr-1"></i> Files (${u.fileCount||0})</button>
+                        <td class="px-6 py-4"><span class="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-500 border border-yellow-500/30 px-2.5 py-1 rounded-md uppercase text-[10px] font-black tracking-wider shadow-sm">${u.plan}</span></td>
+                        <td class="px-6 py-4 flex items-center gap-2 mt-2">${methodIcon} <span class="capitalize text-slate-400">${u.provider || 'email'}</span></td>
+                        <td class="px-6 py-4 text-center"><span class="font-mono text-sm font-black ${u.fileCount > 0 ? 'text-white' : 'text-slate-600'}">${u.fileCount || 0}</span></td>
+                        <td class="px-6 py-4">${statusBadge}</td>
+                        <td class="px-6 py-4 text-right space-x-1">
+                            <button onclick="viewFiles('${u.email}')" class="bg-blue-600/10 hover:bg-blue-600/20 text-blue-500 border border-blue-500/30 px-4 py-1.5 rounded-lg transition font-bold tracking-wide uppercase text-[10px]"><i class="fas fa-database mr-1"></i> Data</button>
                             ${banBtn}
-                            <button onclick="actionUser('${u.email}', 'delete')" class="bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white px-3 py-1.5 rounded transition text-xs font-bold shadow-md" title="Annihilate User"><i class="fas fa-trash-alt"></i></button>
+                            <button onclick="actionUser('${u.email}', 'delete')" class="bg-slate-800 hover:bg-red-600/20 text-slate-400 hover:text-red-500 border border-slate-700 hover:border-red-500/50 w-8 h-8 rounded-lg transition" title="Purge Account"><i class="fas fa-skull"></i></button>
                         </td>
                     </tr>`;
                 });
-                tbody.innerHTML = html || '<tr><td colspan="5" class="p-8 text-center text-gray-500">No users found.</td></tr>';
-                document.getElementById('statUsers').innerText = users.length;
-            } catch (err) { tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-400 font-bold"><i class="fas fa-exclamation-triangle mr-2"></i> Failed to connect.</td></tr>'; }
+
+                tbody.innerHTML = html || '<tr><td colspan="6" class="p-12 text-center text-slate-500 font-mono">DATABASE EMPTY</td></tr>';
+                document.getElementById('statUsers').innerText = GLOBAL_USERS.length;
+                document.getElementById('statFiles').innerText = totalFiles;
+                // Fake Estimate Storage (Avg 2.5MB per file)
+                document.getElementById('statStorage').innerHTML = `${(totalFiles * 0.0025).toFixed(2)} <span class="text-sm text-purple-400">GB</span>`;
+
+            } catch (err) { tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-red-500 font-bold bg-red-500/5">CRITICAL ERROR: Connection to API Node Failed.</td></tr>'; }
         }
 
         async function actionUser(email, action) {
-            let msg = action === 'delete' ? `🚨 WARNING: Do you want to ANNIHILATE ${email}? All their data will be wiped!` : `Are you sure you want to ${action} ${email}?`;
+            let msg = action === 'delete' ? `[DANGER] Purge user ${email} from database permanently? All files will be lost.` : `Confirm ${action.toUpperCase()} protocol for ${email}?`;
             if(!confirm(msg)) return;
             try {
                 const res = await fetch(WORKER_URL + '/api/v1/admin/user/action', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY }, body: JSON.stringify({ email, action }) });
-                if(res.ok) { loadUsers(); } else { alert("Failed to execute action."); }
-            } catch(e) { alert("Network error!"); }
+                if(res.ok) { loadUsers(); } else { alert("Command rejected by server."); }
+            } catch(e) { alert("API Node Unreachable."); }
         }
 
         async function viewFiles(email) {
-            document.getElementById('modalTitle').innerHTML = `<i class="fas fa-folder-open text-yellow-400 mr-2"></i> Files for ${email}`;
+            document.getElementById('modalTitle').innerHTML = `<i class="fas fa-folder-tree text-yellow-500 mr-2"></i> ${email}`;
+            document.getElementById('modalSub').innerText = "Inspecting encrypted data blobs...";
             const c = document.getElementById('modalContent');
-            c.innerHTML = '<div class="text-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div>';
+            c.innerHTML = '<div class="text-center py-20"><i class="fas fa-circle-notch fa-spin text-4xl text-blue-500"></i></div>';
             document.getElementById('filesModal').classList.remove('hidden');
 
             try {
                 const res = await fetch(WORKER_URL + '/api/v1/admin/user/files', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY }, body: JSON.stringify({ email }) });
                 const files = await res.json();
-                if(files.length === 0) { c.innerHTML = '<p class="text-center text-gray-500 py-10">This user has no files.</p>'; return; }
                 
-                let html = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">';
+                if(files.length === 0) { 
+                    c.innerHTML = '<div class="text-center py-20 flex flex-col items-center"><i class="fas fa-box-open text-6xl text-slate-800 mb-4"></i><p class="text-slate-500 font-mono uppercase tracking-widest text-xs">No Data Found</p></div>'; 
+                    document.getElementById('nukeBtn').classList.add('hidden');
+                    return; 
+                }
+                
+                // Show Nuke button if files exist
+                const nBtn = document.getElementById('nukeBtn');
+                nBtn.classList.remove('hidden');
+                nBtn.onclick = () => nukeAllFiles(email, files);
+
+                let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
                 files.reverse().forEach(f => {
                     html += `
-                    <div class="bg-gray-900 border border-gray-700 p-4 rounded-xl flex items-center justify-between group">
-                        <div class="overflow-hidden">
-                            <h3 class="font-bold text-sm text-gray-200 truncate pr-2" title="${f.name || 'UHD_'+f.id}">${f.name || 'UHD_'+f.id}</h3>
-                            <a href="${f.directUrl || WORKER_URL+'/stream/'+f.id}" target="_blank" class="text-[10px] text-blue-400 hover:underline">View File <i class="fas fa-external-link-alt ml-1"></i></a>
+                    <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl flex flex-col relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition">
+                            <button onclick="expireFile('${f.id}', '${email}')" class="bg-red-500 hover:bg-red-600 text-white w-7 h-7 rounded shadow-lg flex items-center justify-center" title="Terminate File"><i class="fas fa-trash text-xs"></i></button>
                         </div>
-                        <button onclick="expireFile('${f.id}', '${email}')" class="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white p-3 rounded-lg transition" title="Force Expire & Delete">
-                            <i class="fas fa-fire"></i>
-                        </button>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-blue-400"><i class="fas fa-file-alt"></i></div>
+                            <div class="overflow-hidden">
+                                <h3 class="font-bold text-white truncate text-sm" title="${f.name || 'UHD_'+f.id}">${f.name || 'UHD_'+f.id}</h3>
+                                <p class="text-[10px] text-slate-500 font-mono">${new Date(f.date).toLocaleString()}</p>
+                            </div>
+                        </div>
+                        <a href="${f.directUrl || WORKER_URL+'/stream/'+f.id}" target="_blank" class="w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-lg text-xs font-bold transition uppercase tracking-wider mt-auto">Inspect Data</a>
                     </div>`;
                 });
                 c.innerHTML = html + '</div>';
-            } catch(e) { c.innerHTML = '<p class="text-red-400 text-center py-10">Error loading files.</p>'; }
+            } catch(e) { c.innerHTML = '<p class="text-red-500 text-center py-20 font-mono">Decryption Failed.</p>'; }
         }
 
         async function expireFile(fileId, email) {
-            if(!confirm(`🔥 Do you want to permanently DELETE and EXPIRE file [${fileId}]?`)) return;
+            if(!confirm(`Delete file [${fileId}]? This breaks all existing links instantly.`)) return;
             try {
                 const res = await fetch(WORKER_URL + '/api/v1/admin/file/delete', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY }, body: JSON.stringify({ fileId, email }) });
-                if(res.ok) { viewFiles(email); } else { alert("Failed to delete file."); }
+                if(res.ok) { viewFiles(email); loadUsers(); } else { alert("Failed to delete file."); }
             } catch(e) { alert("Network error!"); }
+        }
+
+        // Feature: Bulk Delete
+        async function nukeAllFiles(email, filesArray) {
+            if(!confirm(`☢️ DANGER: You are about to NUKE ${filesArray.length} files for ${email}. This CANNOT be undone. Proceed?`)) return;
+            const c = document.getElementById('modalContent');
+            c.innerHTML = '<div class="text-center py-20"><i class="fas fa-radiation fa-spin text-5xl text-red-500 mb-4 glow-red"></i><p class="text-red-400 font-mono animate-pulse">EXECUTING NUKE PROTOCOL...</p></div>';
+            
+            // Delete sequentially to avoid Cloudflare rate limits
+            for (let f of filesArray) {
+                await fetch(WORKER_URL + '/api/v1/admin/file/delete', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY }, body: JSON.stringify({ fileId: f.id, email }) });
+            }
+            alert('Fallout clear. All files erased.');
+            viewFiles(email);
+            loadUsers();
         }
 
         function closeModal() { document.getElementById('filesModal').classList.add('hidden'); }
